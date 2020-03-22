@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.powercoder.evaluation.dao.PictureDetailMapper">
+    <sql id="insertFields">
+        title,
+        picture,
+        module,
+        url,
+        show_order,
+        used,
+        moving_picture,
+        synchronize_to_moving,
+        create_user,
+        create_datetime,
+        version
+    </sql>
+    <sql id="selectFields">
+        id,
+        title,
+        picture,
+        module,
+        url,
+        show_order,
+        used,
+        moving_picture,
+        synchronize_to_moving,
+        create_user,
+        create_datetime,
+        version
+    </sql>
+    <select id="findRows" resultType="int">
+        select count(1)
+        from tt_picture_detail
+        where 1 = 1
+        <if test='module != "0"'>
+            and module = #{module}
+        </if>
+        <if test='used != "0"'>
+            and used = #{used}
+        </if>
+        <if test='synchronizeToMoving != "0"'>
+            and synchronize_to_moving = #{synchronizeToMoving}
+        </if>
+        <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(title)">
+            and title like concat('%'#{title}'%')
+        </if>
+    </select>
+    <select id="selectById" resultType="PictureDetail">
+        select
+        <include refid="selectFields"/>
+        from tt_picture_detail
+        where id = #{id}
+    </select>
+    <select id="selectByModule" resultType="PictureDetail">
+        select
+        <include refid="selectFields"/>
+        from tt_picture_detail
+        where
+        1=1
+        <if test="module != 0">
+            and module = #{module}
+        </if>
+        and used = #{used}
+    </select>
+    <select id="selectAll" resultType="PictureDetail">
+        select
+        <include refid="selectFields"/>
+        from tt_picture_detail
+        where 1=1
+        <if test='module != null and module != "0"'>
+            and module = #{module}
+        </if>
+        <if test='used != "0"'>
+            and used = #{used}
+        </if>
+        <if test='synchronizeToMoving != "0"'>
+            and synchronize_to_moving = #{synchronizeToMoving}
+        </if>
+        <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(title)">
+            and title like concat(concat("%",#{title}),"%")
+        </if>
+        order by module asc,show_order asc
+        limit #{offset},#{limit}
+    </select>
+    <delete id="deleteById">
+        delete
+        from tt_picture_detail
+        where id=#{id}
+        <if test='version != "0"'>
+            and version = #{version}
+        </if>
+    </delete>
+    <insert id="insertPicture">
+        insert
+        into tt_picture_detail(<include refid="insertFields"/>)
+        value(#{title},#{picture},#{module},#{url},#{showOrder},#{used},#{movingPicture},
+        #{synchronizeToMoving},#{createUser},#{createDateTime},#{version})
+
+    </insert>
+    <update id="updateUsedById">
+        update tt_picture_detail set  used=#{used}  where id=#{id};
+    </update>
+
+
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.powercoder.evaluation.dao.BusinessConsultingMapper">
+    <sql id="insertFiles">
+        prod_id,
+        name,
+        phone,
+        email,
+        business_name,
+        company_size_id,
+        company_position_id,
+        note
+    </sql>
+    <sql id="selectFiles">
+        ttbusiness.id,
+        ttbusiness.prod_id,
+        ttbusiness.name,
+        ttbusiness.phone,
+        ttbusiness.email,
+        ttbusiness.business_name,
+        ttbusiness.company_size_id,
+        ttbusiness.company_position_id,
+        ttbusiness.note,
+        ttposition.company_position_id,
+        ttposition.position_name,
+        ttsize.company_size_id,
+        ttsize.company_size,
+        ttprod.prod_id,
+        ttprod.name as prod_name
+    </sql>
+    <insert id="insertDetail">
+        insert into tt_business_consulting(<include refid="insertFiles"/>)
+        value(#{prodId},#{name},#{phone},#{email},#{businessName},#{companySizeId},#{companyPositionId},#{note})
+    </insert>
+    <select id="selectByCond" resultType="businessConsulting">
+        select
+        <include refid="selectFiles"/>
+        from tt_business_consulting as ttbusiness
+        left join tt_company_position as ttposition
+        on ttposition.company_position_id = ttbusiness.company_position_id
+        left join tt_company_size as ttsize
+        on ttsize.company_size_id = ttbusiness.company_size_id
+        left join tt_produce as ttprod
+        on ttprod.prod_id = ttbusiness.prod_id
+        where 1=1
+        <if test='prodId != "0"'>
+            and ttbusiness.prod_id=#{prodId}
+        </if>
+        <if test='companySizeId != "0"'>
+            and ttbusiness.company_size_id=#{companySizeId}
+        </if>
+        <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(businessName)">
+            and ttbusiness.business_name like concat(concat("%",#{businessName}),"%")
+        </if>
+        limit #{offset},#{limit}
+    </select>
+    <select id="findRows" resultType="int">
+        select count(1)
+        from tt_business_consulting
+        where 1=1
+        <if test='prodId != "0"'>
+            and prod_id=#{prodId}
+        </if>
+        <if test='companySizeId != "0"'>
+            and company_size_id=#{companySizeId}
+        </if>
+        <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(businessName)">
+            and business_name like concat(concat("%",#{businessName}),"%")
+        </if>
+    </select>
+</mapper>

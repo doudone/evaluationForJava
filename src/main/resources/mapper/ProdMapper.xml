@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.powercoder.evaluation.dao.ProdMapper">
+    <select id="getProdLevel1" resultType="ProdLevel1">
+        select class_level_1_name
+        from tt_prod_class_level_1
+        where prod_class_level_1_id = #{level1_id}
+    </select>
+
+    <select id="getProdLevel2" resultType="ProdLevel2">
+        select class_level_2_name
+        from tt_prod_class_level_2
+        where prod_class_level_2_id = #{level2_id}
+    </select>
+
+    <select id="getProdMessage" resultType="ProdMessage">
+        select name,price,url
+        from tt_produce
+        where prod_id = #{prod_id}
+    </select>
+    <select id="selectAllProd" resultType="Product">
+        select prod_id,name
+        from tt_produce
+    </select>
+    <select id="selectNameById" resultType="String">
+        select name
+        from tt_produce
+        where prod_id=#{id}
+    </select>
+</mapper>
